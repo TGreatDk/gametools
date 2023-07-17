@@ -20,7 +20,7 @@ const Mission = (props: { mission: IMission }) => {
             </div>
             <div style={{margin:'6px'}}>
                 <div>
-                    <div>
+                    <div onClick={() => {setRound(round+1)}}>
                     Rounds: {round} / {props.mission.Length}
                     </div>
                     <div>
