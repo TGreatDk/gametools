@@ -1,42 +1,43 @@
-import IMission from "./IMission";
 import { useState } from 'react'
 import Objective from "./Objective";
+import MissionUtility from "./missionUtility";
 
-const Mission = (props: { mission: IMission }) => {
+const Mission = (props: { mission: number }) => {
+    const activeMission = MissionUtility().GetMission(props.mission);
     const [round, setRound] = useState(1);
     const [missionLog, setMissionLog] = useState<string[]>([]);
-    const [playerApts,setPlayerApts] = useState(0);
-    const [playerBpts,setPlayerBpts] = useState(0);
+    const [playerApts, setPlayerApts] = useState(0);
+    const [playerBpts, setPlayerBpts] = useState(0);
 
     return <div>
-        <h3>{props.mission.Name}</h3>
-        <div style={{display:"flex"}}>
+        <h3>{activeMission.Name}</h3>
+        <div style={{ display: "flex" }}>
             <div>
-            <img src={props.mission.Map} />
-            <div>
-                <h4>Setting up the battlefield</h4>
-                {props.mission.Setup}
-            </div>
-            </div>
-            <div style={{margin:'6px'}}>
+                <img src={activeMission.Map} />
                 <div>
-                    <div onClick={() => {setRound(round+1)}}>
-                    Rounds: {round} / {props.mission.Length}
+                    <h4>Setting up the battlefield</h4>
+                    {activeMission.Setup}
+                </div>
+            </div>
+            <div style={{ margin: '6px' }}>
+                <div>
+                    <div>
+                        Rounds: {round} / {activeMission.Length}
                     </div>
                     <div>
-                    <button>+</button>
+                        <button onClick={() => { setRound(round + 1); setMissionLog(missionLog.concat(`--- ROUND ${round + 1} BEGINS ---`)) }}>+</button>
                     </div>
-                    </div>
+                </div>
                 <div>Player A: {playerApts}</div>
                 <div>Player B: {playerBpts}</div>
-                {props.mission.Objectives.map((objective,i) => <Objective key={i} ObjectiveNumber={i+1} objective={objective} scoremission={(player) => {
-                    const objectiveResult = `${round}: Player ${player} scored ${objective.VP} by completing objective ${i+1}`;
+                {activeMission.Objectives.map((objective, i) => <Objective key={i} ObjectiveNumber={i + 1} objective={objective} scoremission={(player) => {
+                    const objectiveResult = `${round}: Player ${player} scored ${objective.VP} by completing objective ${i + 1}`;
                     setMissionLog(missionLog.concat(objectiveResult))
-                    if(player === 'A')
-                        setPlayerApts(playerApts+objective.VP);
+                    if (player === 'A')
+                        setPlayerApts(playerApts + objective.VP);
                     else if (player === 'B')
-                        setPlayerBpts(playerBpts +objective.VP);
-                } }/>)}
+                        setPlayerBpts(playerBpts + objective.VP);
+                }} />)}
             </div>
         </div>
         <div>
