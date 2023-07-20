@@ -8,7 +8,6 @@ import { Outlet,Link } from 'react-router-dom';
 
 function App() {
   const missions = MissionUtility().GetMissions();
-  const [activeMission, setActiveMission] = useState<number>(-1)
 
   const [drawOpen, setDrawOpen] = useState(false);
 
