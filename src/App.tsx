@@ -1,10 +1,9 @@
-import { useState } from 'react'
-import './App.css'
-import Mission from './missions/mission'
-import MissionUtility from './missions/missionUtility'
-import { AppBar, Box, Toolbar, IconButton,Drawer } from '@mui/material'
 import { Menu } from '@mui/icons-material'
-import React from 'react'
+import './App.css'
+import { AppBar, Box, Toolbar, IconButton,Drawer, Container, Typography, Stack, Link } from '@mui/material'
+import MissionUtility from './missions/missionUtility';
+import { useState } from 'react';
+
 
 function App() {
   const missions = MissionUtility().GetMissions();
@@ -17,29 +16,33 @@ function App() {
   }
 
   return (
-    <React.Fragment key={'left'}>
-    <>
-      <Box position={'fixed'} top={0} width={'100%'}>
-        <AppBar position='static' >
+    <Container maxWidth={false} sx={{padding:'0 !important'}}>
+      <AppBar position='static'>
           <Toolbar>
-            <IconButton onClick={() => toggleDrawer(!drawOpen)} >
+            <IconButton onClick={() => toggleDrawer(true)}>
               <Menu/>
             </IconButton>
+            <Typography variant='h6' component={'div'} sx={{flexGrow:1}}>
+            Conquest - The last argument of kings scenario tracker.
+            </Typography>
           </Toolbar>
         </AppBar>
-      </Box>
-      <Drawer anchor='left' open={drawOpen} onClose={() =>setDrawOpen(false)}>
-      {
-        missions.map((mission, i) => {
-          return <div><a onClick={() => { setActiveMission(i);toggleDrawer(false) }}>{mission.Name}</a></div>
-        })
-      }
+      <Drawer anchor='left' open={drawOpen} onClose={() => setDrawOpen(false)}>
+        <Container maxWidth='xs'>
+        <Stack>
+        {missions.map(mission => <Link>{mission.Name}</Link>)}
+          </Stack>          
+        </Container>
       </Drawer>
-      <div id="body" style={{margin:'50px'}}>      
-      {activeMission > -1 && <Mission mission={activeMission} />}
-      </div>
-    </>
-    </React.Fragment>
+      <Stack direction='row' justifyContent='center'>        
+      <Box sx={{my:4}}>
+        <Typography variant='h4' component="h1" gutterBottom>
+          Hi! Please choose a mission by clicking the "hamburger" menu in the topleft corner. 
+        </Typography>
+
+      </Box>
+      </Stack>
+    </Container>
   )
 }
 
