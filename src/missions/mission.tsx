@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Objective from "./Objective";
 import MissionUtility from "./missionUtility";
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { useLoaderData } from 'react-router-dom';
 import IMission from './IMission';
 
@@ -17,7 +17,7 @@ const Mission = () => {
     const [missionLog, setMissionLog] = useState<string[]>([]);
     const [playerApts, setPlayerApts] = useState(0);
     const [playerBpts, setPlayerBpts] = useState(0);
-
+    debugger;
     return <Stack direction={'column'}>
         <Typography component={'div'} variant='h3' textAlign='center'>
             {activeMission.Name}
@@ -40,19 +40,19 @@ const Mission = () => {
                             Rounds: {round} / {activeMission.Length}
                         </div>
                         <div>
-                            <button onClick={() => { setRound(round + 1); setMissionLog(missionLog.concat(`--- ROUND ${round + 1} BEGINS ---`)) }}>+</button>
+                            <Button disabled={round>=activeMission.Length} onClick={() => { setRound(round + 1); setMissionLog(missionLog.concat(`--- ROUND ${round + 1} BEGINS ---`)) }}>+</Button>
                         </div>
                     </div>
                     <div>Player A: {playerApts}</div>
                     <div>Player B: {playerBpts}</div>
-                    {activeMission.Objectives.map((objective, i) => <Objective key={i} ObjectiveNumber={i + 1} objective={objective} scoremission={(player) => {
+                    {activeMission.Scoring.filter(am => am.RoundBegin<=round && am.RoundEnd>=round).map(scoring => scoring.Objectives.map((objective, i) => <Objective key={i} ObjectiveNumber={i + 1} objective={objective} scoremission={(player) => {
                         const objectiveResult = `${round}: Player ${player} scored ${objective.VP} by completing objective ${i + 1}`;
                         setMissionLog(missionLog.concat(objectiveResult))
                         if (player === 'A')
                             setPlayerApts(playerApts + objective.VP);
                         else if (player === 'B')
                             setPlayerBpts(playerBpts + objective.VP);
-                    }} />)}
+                    }} />))}
                 </Box>
             </Box>
         </Stack>

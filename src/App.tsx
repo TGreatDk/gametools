@@ -30,7 +30,7 @@ function App() {
       <Drawer anchor='left' open={drawOpen} onClose={() => setDrawOpen(false)}>
         <Container maxWidth='xs'>
           <Stack>
-            {missions.map((mission, i) => <Link to={`missions/${i}`}>{mission.Name}</Link>)}
+            {missions.map((mission, i) => <Link onClick={() => setDrawOpen(false)} to={`missions/${i}`}>{mission.Name}</Link>)}
           </Stack>
         </Container>
       </Drawer>
