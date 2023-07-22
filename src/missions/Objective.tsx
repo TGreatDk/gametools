@@ -1,20 +1,26 @@
-import { Button, Stack } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { IObjective } from "./IMission";
 
-const Objective = (props: {ObjectiveNumber: number; objective: IObjective; scoremission:(player:'A'|'B') => void}) => {
-    return <div style={{margin: '10px 0'}}>
+const Objective = (props: { ObjectiveNumber: number; objective: IObjective; scoremission: (player: 'A' | 'B', mode: '+' | '-') => void }) => {
+    return <div style={{ margin: '10px 0' }}>
         <div>
             {props.ObjectiveNumber}: {props.objective.Description}
         </div>
-        <Stack direction='row' justifyContent='center'>
-            <div>
-                <Button onClick={() => props.scoremission('A')}>Player A</Button>
-                {/* <button>-</button> */}
-            </div>
-            <div style={{width:'50px'}}></div>
-            <div>
-                <Button onClick={() => props.scoremission('B')}>Player B</Button>                
-            </div>
+        <Stack direction='row' justifyContent='center' gap={5}>
+            <Stack direction='column' justifyContent={'center'}>
+                <Typography variant='h6' sx={{textAlign:'center'}}>Player A</Typography>
+                <Stack direction='row' gap={1}>
+                    <Button variant='contained' onClick={() => props.scoremission('A', '+')}>+</Button>
+                    <Button variant='contained' onClick={() => props.scoremission('A', '-')}>-</Button>
+                </Stack>
+            </Stack>
+            <Stack direction='column' justifyContent={'center'}>
+                <Typography variant='h6' sx={{textAlign:'center'}}>Player B</Typography>
+                <Stack direction='row' gap={1}>
+                    <Button variant='contained' onClick={() => props.scoremission('B', '+')}>+</Button>
+                    <Button variant='contained' onClick={() => props.scoremission('B', '-')}>-</Button>
+                </Stack>
+            </Stack>            
         </Stack>
     </div>
 }

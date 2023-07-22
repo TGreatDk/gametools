@@ -1,20 +1,30 @@
 import { useState } from 'react'
 import Objective from "./Objective";
 import MissionUtility from "./missionUtility";
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Button, LinearProgress, Stack, Typography } from '@mui/material';
 import { useLoaderData } from 'react-router-dom';
 import IMission from './IMission';
+import { useTheme } from '@mui/material';
 
 export function loader({ params }: any) {
     const mission = MissionUtility().GetMission(params.missionId);
     return mission;
 }
 
+interface ScoreInfo{
+    Player: 'A'|'B';
+    Round: number;
+    Pts: number;
+    Objective: number;
+}
+
 const Mission = () => {
-    debugger;
+    
+    const theme = useTheme();
+
     const activeMission = useLoaderData() as IMission;
     const [round, setRound] = useState(1);
-    const [missionLog, setMissionLog] = useState<string[]>([]);
+    const [missionLog, setMissionLog] = useState<ScoreInfo>([]);
     const [playerApts, setPlayerApts] = useState(0);
     const [playerBpts, setPlayerBpts] = useState(0);
     debugger;
@@ -30,28 +40,32 @@ const Mission = () => {
                 </Typography>
             </Box>
             <Box maxWidth={'800px'}>
+                <Stack direction='column' gap={1}>
+                    <Box>
+                        Rounds: {round} / {activeMission.Length}
+                        <LinearProgress variant='determinate' value={100 * (round / activeMission.Length)} />
+                    </Box>
+                    <Stack direction='row' gap={1}>
+                    <Button variant='outlined' disabled={round >= activeMission.Length} onClick={() => { setRound(round + 1); setMissionLog(missionLog.concat(`--- ROUND ${round + 1} BEGINS ---`)) }}>+</Button>
+                    <Button variant='outlined' disabled={round >= activeMission.Length} onClick={() => { setRound(round - 1); setMissionLog(missionLog.concat(`--- ROUND ${round - 1} AGAIN? ---`)) }}>-</Button>
+                    </Stack>
+                </Stack>
                 <Typography variant='h5'>
                     Score board
                 </Typography>
-                <div style={{ width: '300px', height: '20px', backgroundColor: 'red' }} />
                 <Box>
-                    <div>
-                        <div>
-                            Rounds: {round} / {activeMission.Length}
-                        </div>
-                        <div>
-                            <Button disabled={round>=activeMission.Length} onClick={() => { setRound(round + 1); setMissionLog(missionLog.concat(`--- ROUND ${round + 1} BEGINS ---`)) }}>+</Button>
-                        </div>
-                    </div>
                     <div>Player A: {playerApts}</div>
                     <div>Player B: {playerBpts}</div>
-                    {activeMission.Scoring.filter(am => am.RoundBegin<=round && am.RoundEnd>=round).map(scoring => scoring.Objectives.map((objective, i) => <Objective key={i} ObjectiveNumber={i + 1} objective={objective} scoremission={(player) => {
-                        const objectiveResult = `${round}: Player ${player} scored ${objective.VP} by completing objective ${i + 1}`;
+                    {activeMission.Scoring.filter(am => am.RoundBegin <= round && am.RoundEnd >= round).map(scoring => scoring.Objectives.map((objective, i) => <Objective key={i} ObjectiveNumber={i + 1} objective={objective} scoremission={(player, mode) => {
+                        
+                        const pts = (mode==='+'?1:-1) * objective.VP
+                        const objectiveResult = <Typography></Typography> //${round}: Player ${player} scored ${pts} for objective ${i + 1}`;
                         setMissionLog(missionLog.concat(objectiveResult))
-                        if (player === 'A')
-                            setPlayerApts(playerApts + objective.VP);
-                        else if (player === 'B')
-                            setPlayerBpts(playerBpts + objective.VP);
+
+                         if (player === 'A')
+                             setPlayerApts(playerApts + pts);
+                         else if (player === 'B')
+                             setPlayerBpts(playerBpts + pts);
                     }} />))}
                 </Box>
             </Box>
@@ -60,39 +74,12 @@ const Mission = () => {
             <Typography variant='h5' component='div'>
                 Mission log
             </Typography>
-            <div>{missionLog.map(logItem => <div>{logItem}</div>)}</div>
+            <Typography variant='body1'>
+                {missionLog.map(logItem => <Typography color={theme.palette.info.main}>{logItem}</Typography>)}
+            </Typography>
+            {/* <div></div> */}
         </Box>
     </Stack >
-
-    // return <div>
-    //     <h3>{activeMission.Name}</h3>
-    //     <div style={{ display: "flex" }}>    
-    //         <div style={{ margin: '6px' }}>
-    //             <div>
-    //                 <div>
-    //                     Rounds: {round} / {activeMission.Length}
-    //                 </div>
-    //                 <div>
-    //                     <button onClick={() => { setRound(round + 1); setMissionLog(missionLog.concat(`--- ROUND ${round + 1} BEGINS ---`)) }}>+</button>
-    //                 </div>
-    //             </div>
-    //             <div>Player A: {playerApts}</div>
-    //             <div>Player B: {playerBpts}</div>
-    //             {activeMission.Objectives.map((objective, i) => <Objective key={i} ObjectiveNumber={i + 1} objective={objective} scoremission={(player) => {
-    //                 const objectiveResult = `${round}: Player ${player} scored ${objective.VP} by completing objective ${i + 1}`;
-    //                 setMissionLog(missionLog.concat(objectiveResult))
-    //                 if (player === 'A')
-    //                     setPlayerApts(playerApts + objective.VP);
-    //                 else if (player === 'B')
-    //                     setPlayerBpts(playerBpts + objective.VP);
-    //             }} />)}
-    //         </div>
-    //     </div>
-    //     <div>
-    //         <h5>Mission log</h5>
-    //         <div>{missionLog.map(logItem => <div>{logItem}</div>)}</div>
-    //     </div>
-    // </div>
 }
 
 export default Mission;
