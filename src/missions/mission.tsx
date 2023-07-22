@@ -95,7 +95,7 @@ const Mission = () => {
                 Mission log
             </Typography>
             <Typography variant='body1'>
-                {missionLog.map((scores, mi) => scores.map((scoreItem, si) => (
+                {missionLog.map((scores, mi) => scores.map((scoreItem) => (
                     <React.Fragment>
                         {scoreItem.Pts > 0 &&
                             <Typography color={theme.palette.info.main}>
