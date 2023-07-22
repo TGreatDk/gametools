@@ -35,12 +35,15 @@ function App() {
           <Stack>
             <Typography variant='h5'>Missions</Typography>
             {missions.map((mission, i) => <div key={i}><Link style={{...theme.typography.button,textDecoration:'none',color:theme.palette.primary.main}} onClick={() => setDrawOpen(false)} to={`missions/${i}`}>{mission.Name}</Link></div>)}
+            <Typography variant='h5'>Other?</Typography>
+            <Link style={{...theme.typography.button,textDecoration:'none',color:theme.palette.primary.main}} onClick={() => setDrawOpen(false)} to={`about`}>
+              About</Link>
           </Stack>
         </Container>
       </Drawer>
       <Stack direction='row' justifyContent='center'>
         <Box sx={{ m: 4,width:'100%' }}>
-          <Outlet />
+          <Outlet/>
         </Box>
       </Stack>
     </Container>

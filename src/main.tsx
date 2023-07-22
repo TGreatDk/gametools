@@ -5,6 +5,7 @@ import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Mission, { loader } from './missions/mission.tsx';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import About from './about.tsx';
 
 const darkTheme = createTheme({
   palette: {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
         path: 'missions/:missionId',
         element: <Mission />,
         loader: loader
+      },
+      {
+        path: 'about',
+        element: <About/>
       }
     ]
   }

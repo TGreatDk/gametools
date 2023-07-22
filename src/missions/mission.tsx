@@ -32,8 +32,8 @@ const Mission = () => {
         <Typography component={'div'} variant='h3' textAlign='center'>
             {activeMission.Name}
         </Typography>
-        <Stack direction={'row'} spacing={2} alignContent={'start'}>
-            <Box maxWidth='500px'>
+        <Stack direction={'row'} spacing={2} alignContent={'start'} flexWrap='wrap-reverse' gap={3}>
+            <Box maxWidth='500px' minWidth='300px'>
                 <img src={activeMission.Map} width={'100%'} />
                 <Typography variant='body1' component={'div'}>
                     {activeMission.Setup}
