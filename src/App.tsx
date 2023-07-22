@@ -1,7 +1,6 @@
 import { Menu } from '@mui/icons-material'
 import './App.css'
 import { AppBar, Box, Toolbar, IconButton, Drawer, Container, Typography, Stack} from '@mui/material'
-import LinkIcon from '@mui/icons-material/Link';
 import MissionUtility from './missions/missionUtility';
 import { useState } from 'react';
 import { Outlet,Link } from 'react-router-dom';
@@ -35,7 +34,7 @@ function App() {
         <Container maxWidth='xs'>
           <Stack>
             <Typography variant='h5'>Missions</Typography>
-            {missions.map((mission, i) => <div><Link style={{...theme.typography.button,textDecoration:'none',color:theme.palette.primary.main}} onClick={() => setDrawOpen(false)} to={`missions/${i}`}>{mission.Name}</Link></div>)}
+            {missions.map((mission, i) => <div key={i}><Link style={{...theme.typography.button,textDecoration:'none',color:theme.palette.primary.main}} onClick={() => setDrawOpen(false)} to={`missions/${i}`}>{mission.Name}</Link></div>)}
           </Stack>
         </Container>
       </Drawer>

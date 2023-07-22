@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Objective from "./Objective";
 import MissionUtility from "./missionUtility";
 import { Box, Button, LinearProgress, Stack, Typography } from '@mui/material';
@@ -11,23 +11,23 @@ export function loader({ params }: any) {
     return mission;
 }
 
-interface ScoreInfo{
-    Player: 'A'|'B';
-    Round: number;
+interface ScoreInfo {
+    Player: 'A' | 'B';
     Pts: number;
     Objective: number;
 }
 
 const Mission = () => {
-    
+
     const theme = useTheme();
 
     const activeMission = useLoaderData() as IMission;
     const [round, setRound] = useState(1);
-    const [missionLog, setMissionLog] = useState<ScoreInfo>([]);
+    const [disableMinusRound, setDisableMinusRound] = useState(false);
+    const [missionLog, setMissionLog] = useState<ScoreInfo[][]>([]);
     const [playerApts, setPlayerApts] = useState(0);
     const [playerBpts, setPlayerBpts] = useState(0);
-    debugger;
+
     return <Stack direction={'column'}>
         <Typography component={'div'} variant='h3' textAlign='center'>
             {activeMission.Name}
@@ -46,26 +46,46 @@ const Mission = () => {
                         <LinearProgress variant='determinate' value={100 * (round / activeMission.Length)} />
                     </Box>
                     <Stack direction='row' gap={1}>
-                    <Button variant='outlined' disabled={round >= activeMission.Length} onClick={() => { setRound(round + 1); setMissionLog(missionLog.concat(`--- ROUND ${round + 1} BEGINS ---`)) }}>+</Button>
-                    <Button variant='outlined' disabled={round >= activeMission.Length} onClick={() => { setRound(round - 1); setMissionLog(missionLog.concat(`--- ROUND ${round - 1} AGAIN? ---`)) }}>-</Button>
+                        <Button variant='outlined' disabled={round >= activeMission.Length} onClick={() => { setRound(round + 1); setDisableMinusRound(false) }}>+</Button>
+                        <Button variant='outlined' disabled={round >= activeMission.Length || disableMinusRound} onClick={() => { setRound(round - 1) }}>-</Button>
                     </Stack>
                 </Stack>
                 <Typography variant='h5'>
                     Score board
                 </Typography>
                 <Box>
-                    <div>Player A: {playerApts}</div>
-                    <div>Player B: {playerBpts}</div>
-                    {activeMission.Scoring.filter(am => am.RoundBegin <= round && am.RoundEnd >= round).map(scoring => scoring.Objectives.map((objective, i) => <Objective key={i} ObjectiveNumber={i + 1} objective={objective} scoremission={(player, mode) => {
-                        
-                        const pts = (mode==='+'?1:-1) * objective.VP
-                        const objectiveResult = <Typography></Typography> //${round}: Player ${player} scored ${pts} for objective ${i + 1}`;
-                        setMissionLog(missionLog.concat(objectiveResult))
+                    <div>Player A: {playerApts}VPs</div>
+                    <div>Player B: {playerBpts}VPs</div>
+                    {activeMission.Scoring.filter(am => am.RoundBegin <= round && am.RoundEnd >= round).map(scoring => scoring.Objectives.map((objective, objectiveIndex) => <Objective key={objectiveIndex} ObjectiveNumber={objectiveIndex} objective={objective} scoremission={(player, mode) => {
 
-                         if (player === 'A')
-                             setPlayerApts(playerApts + pts);
-                         else if (player === 'B')
-                             setPlayerBpts(playerBpts + pts);
+                        const pts = (mode === '+' ? 1 : -1) * objective.VP
+                        const objectiveResult: ScoreInfo = {
+                            Player: player,
+                            Objective: objectiveIndex,
+                            Pts: (mode === '+' ? 1 : -1) * objective.VP,
+                        };
+
+                        let misLog = missionLog[round];
+                        const currMissLog = missionLog;
+                        if (!misLog)
+                            misLog = [];
+                        debugger;
+                        // if (mode === '+')
+                        misLog = misLog.concat(objectiveResult);
+                        // else {
+                        //     const index = misLog.map(log => log.Objective).indexOf(objectiveIndex);
+                        //     if (index > -1)
+                        //         misLog = misLog.slice(index, 1);
+                        // }
+
+                        currMissLog[round] = misLog;
+
+                        setMissionLog(currMissLog);
+
+                        if (player === 'A')
+                            setPlayerApts(playerApts + pts);
+                        else if (player === 'B')
+                            setPlayerBpts(playerBpts + pts);
                     }} />))}
                 </Box>
             </Box>
@@ -75,7 +95,20 @@ const Mission = () => {
                 Mission log
             </Typography>
             <Typography variant='body1'>
-                {missionLog.map(logItem => <Typography color={theme.palette.info.main}>{logItem}</Typography>)}
+                {missionLog.map((scores, mi) => scores.map((scoreItem, si) => (
+                    <React.Fragment>
+                        {scoreItem.Pts > 0 &&
+                            <Typography color={theme.palette.info.main}>
+                                {`${mi} - Player ${scoreItem.Player} scored ${scoreItem.Pts}VP by completing objective ${scoreItem.Objective}`}
+                            </Typography>
+                        }
+                        {scoreItem.Pts < 0 &&
+                            <Typography color={theme.palette.error.main}>
+                                {`${mi} - removed ${scoreItem.Pts*-1}VP from player ${scoreItem.Player}`}
+                            </Typography>
+                        }
+                    </React.Fragment>
+                )))}
             </Typography>
             {/* <div></div> */}
         </Box>
