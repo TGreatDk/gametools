@@ -43,9 +43,12 @@ function App() {
       </Drawer>
       <Stack direction='row' justifyContent='center'>
         <Box sx={{ m: 4,width:'100%' }}>
-          <Outlet/>
-        </Box>
+          <Outlet/>          
+        </Box>        
       </Stack>
+      <Box position='fixed' bottom='0' width='100%' sx={{background:theme.palette.primary.main}}>
+        <Typography textAlign='center' padding={1} width='100%' variant='body2' color={theme.palette.primary.contrastText}>This is a community created tool, and is in no way supported by <Link to='https://para-bellum.com'>Para bellum games</Link>.</Typography>
+      </Box>
     </Container>
   )
 }
