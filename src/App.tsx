@@ -2,7 +2,7 @@ import { Menu, LightMode, DarkMode, Close } from '@mui/icons-material'
 import './App.css'
 import { AppBar, Box, Toolbar, IconButton, Drawer, Container, Typography, Stack, ThemeProvider, CssBaseline, createTheme } from '@mui/material'
 import MissionUtility from './missions/missionUtility';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { useTheme } from '@mui/material'
 
