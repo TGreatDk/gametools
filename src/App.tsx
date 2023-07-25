@@ -48,6 +48,7 @@ function App() {
               <Typography variant='h5'>Missions</Typography>
               {missions.map((mission, i) => <div key={i}><Link style={{ ...theme.typography.button, textDecoration: 'none', color: theme.palette.primary.main }} onClick={() => setDrawOpen(false)} to={`missions/${i}`}>{mission.Name}</Link></div>)}
               <Typography variant='h5'>Other?</Typography>
+              <Link style={{ ...theme.typography.button, textDecoration: 'none', color: theme.palette.primary.main }} onClick={() => setDrawOpen(false)} to={`missions/${Math.max(0,Math.round(Math.random()*missions.length)-1)}`}>Just give me a random mission!</Link>
               <Link style={{ ...theme.typography.button, textDecoration: 'none', color: theme.palette.primary.main }} onClick={() => setDrawOpen(false)} to={`about`}>
                 About</Link>
             </Stack>
