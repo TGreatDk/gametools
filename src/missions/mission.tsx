@@ -12,7 +12,7 @@ export function loader({ params }: any) {
 }
 
 interface ScoreInfo {
-    Player: 'A' | 'B';
+    Player: '1' | '2';
     Pts: number;
     Objective: number;
 }
@@ -28,14 +28,26 @@ const Mission = () => {
     const [playerApts, setPlayerApts] = useState(0);
     const [playerBpts, setPlayerBpts] = useState(0);
 
+    const addScore = (scoreItem: ScoreInfo) => {
+        let misLog = missionLog[round];
+        const currMissLog = missionLog;
+        if (!misLog)
+            misLog = [];
+        misLog = misLog.concat(scoreItem);
+
+        currMissLog[round] = misLog;
+
+        setMissionLog(currMissLog);
+    }
+
     return <Stack direction={'column'}>
         <Typography component={'div'} variant='h3' textAlign='center'>
             {activeMission.Name}
         </Typography>
         <Stack direction={'row'} spacing={2} alignContent={'start'} flexWrap='wrap-reverse' gap={3}>
-            <Box maxWidth='500px' minWidth='300px'>
-                <img src={activeMission.Map} width={'100%'} />
-                <Typography variant='body1' component={'div'}>
+            <Box width='30%' minWidth='300px'>
+                <img src={activeMission.Map} width={'100%'} style={{ maxWidth: '450px' }} />
+                <Typography variant='body1' component={'div'} maxWidth={'450px'}>
                     {activeMission.Setup}
                 </Typography>
             </Box>
@@ -46,16 +58,16 @@ const Mission = () => {
                         <LinearProgress variant='determinate' value={100 * (round / activeMission.Length)} />
                     </Box>
                     <Stack direction='row' gap={1}>
-                        <Button variant='outlined' disabled={round >= activeMission.Length} onClick={() => { setRound(round + 1); setDisableMinusRound(false) }}>+</Button>
-                        <Button variant='outlined' disabled={round >= activeMission.Length || disableMinusRound} onClick={() => { setRound(round - 1) }}>-</Button>
+                        <Button variant='outlined' disabled={round >= activeMission.Length} onClick={() => { setRound(round + 1); setDisableMinusRound(false); addScore({Pts: 0, Objective:-1, Player:'1'}) }}>+</Button>
+                        <Button variant='outlined' disabled={round > activeMission.Length || disableMinusRound || round === 1} onClick={() => { setRound(round - 1); }}>-</Button>
                     </Stack>
                 </Stack>
                 <Typography variant='h5'>
                     Score board
                 </Typography>
                 <Box>
-                    <div>Player A: {playerApts}VPs</div>
-                    <div>Player B: {playerBpts}VPs</div>
+                    <div>Player 1: {playerApts}VPs</div>
+                    <div>Player 2: {playerBpts}VPs</div>
                     {activeMission.Scoring.filter(am => am.RoundBegin <= round && am.RoundEnd >= round).map(scoring => scoring.Objectives.map((objective, objectiveIndex) => <Objective key={objectiveIndex} ObjectiveNumber={objectiveIndex} objective={objective} scoremission={(player, mode) => {
 
                         const pts = (mode === '+' ? 1 : -1) * objective.VP
@@ -64,27 +76,11 @@ const Mission = () => {
                             Objective: objectiveIndex,
                             Pts: (mode === '+' ? 1 : -1) * objective.VP,
                         };
+                        addScore(objectiveResult);
 
-                        let misLog = missionLog[round];
-                        const currMissLog = missionLog;
-                        if (!misLog)
-                            misLog = [];
-                        debugger;
-                        // if (mode === '+')
-                        misLog = misLog.concat(objectiveResult);
-                        // else {
-                        //     const index = misLog.map(log => log.Objective).indexOf(objectiveIndex);
-                        //     if (index > -1)
-                        //         misLog = misLog.slice(index, 1);
-                        // }
-
-                        currMissLog[round] = misLog;
-
-                        setMissionLog(currMissLog);
-
-                        if (player === 'A')
+                        if (player === '1')
                             setPlayerApts(playerApts + pts);
-                        else if (player === 'B')
+                        else if (player === '2')
                             setPlayerBpts(playerBpts + pts);
                     }} />))}
                 </Box>
@@ -94,17 +90,22 @@ const Mission = () => {
             <Typography variant='h5' component='div'>
                 Mission log
             </Typography>
-            <Typography variant='body1'>
+            <Typography variant='body1' component='div'>
                 {missionLog.map((scores, mi) => scores.map((scoreItem) => (
                     <React.Fragment>
                         {scoreItem.Pts > 0 &&
+                            <Typography color={theme.palette.success.main}>
+                                {`Round ${mi} - Player ${scoreItem.Player} scored ${scoreItem.Pts}VP by completing objective ${scoreItem.Objective + 1}`}
+                            </Typography>
+                        }
+                        {scoreItem.Pts === 0 &&
                             <Typography color={theme.palette.info.main}>
-                                {`${mi} - Player ${scoreItem.Player} scored ${scoreItem.Pts}VP by completing objective ${scoreItem.Objective}`}
+                                {`--- [ROOUND ${mi+1} BEGINS] ---`}
                             </Typography>
                         }
                         {scoreItem.Pts < 0 &&
                             <Typography color={theme.palette.error.main}>
-                                {`${mi} - removed ${scoreItem.Pts*-1}VP from player ${scoreItem.Player}`}
+                                {`Round ${mi} - removed ${scoreItem.Pts * -1}VP from player ${scoreItem.Player} (objective ${scoreItem.Objective + 1})`}
                             </Typography>
                         }
                     </React.Fragment>

@@ -2,14 +2,14 @@ import { Button, Stack, Typography } from "@mui/material";
 import { IObjective } from "./IMission";
 import { useState } from "react";
 
-const Objective = (props: { ObjectiveNumber: number; objective: IObjective; scoremission: (player: 'A' | 'B', mode: '+' | '-') => void }) => {
+const Objective = (props: { ObjectiveNumber: number; objective: IObjective; scoremission: (player: '1' | '2', mode: '+' | '-') => void }) => {
 
     const [aScored, setAscored] = useState(0);
     const [bScored, setBscored] = useState(0);
 
-    const scoreObjective = (player: 'A' | 'B', mode: '+' | '-') => {
+    const scoreObjective = (player: '1' | '2', mode: '+' | '-') => {
         props.scoremission(player, mode);
-        if (player === 'A')
+        if (player === '1')
             setAscored(aScored + (mode === '+' ? 1 : -1));
         else
             setBscored(bScored + (mode === '+' ? 1 : -1));
@@ -21,17 +21,17 @@ const Objective = (props: { ObjectiveNumber: number; objective: IObjective; scor
         </div>
         <Stack direction='row' justifyContent='center' gap={5}>
             <Stack direction='column' justifyContent={'center'}>
-                <Typography variant='h6' sx={{ textAlign: 'center' }}>Player A</Typography>
+                <Typography variant='h6' sx={{ textAlign: 'center' }}>Player 1</Typography>
                 <Stack direction='row' gap={1}>
-                    <Button variant='contained' onClick={() => scoreObjective('A', '+')}>+</Button>
-                    <Button variant='contained' disabled={aScored <= 0} onClick={() => scoreObjective('A', '-')}>-</Button>
+                    <Button variant='contained' onClick={() => scoreObjective('1', '+')}>+</Button>
+                    <Button variant='contained' disabled={aScored <= 0} onClick={() => scoreObjective('1', '-')}>-</Button>
                 </Stack>
             </Stack>
             <Stack direction='column' justifyContent={'center'}>
-                <Typography variant='h6' sx={{ textAlign: 'center' }}>Player B</Typography>
+                <Typography variant='h6' sx={{ textAlign: 'center' }}>Player 2</Typography>
                 <Stack direction='row' gap={1}>
-                    <Button variant='contained' onClick={() => scoreObjective('B', '+')}>+</Button>
-                    <Button variant='contained' disabled={bScored <= 0} onClick={() => scoreObjective('B', '-')}>-</Button>
+                    <Button variant='contained' onClick={() => scoreObjective('2', '+')}>+</Button>
+                    <Button variant='contained' disabled={bScored <= 0} onClick={() => scoreObjective('2', '-')}>-</Button>
                 </Stack>
             </Stack>
         </Stack>
