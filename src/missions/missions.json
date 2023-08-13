@@ -270,7 +270,7 @@
                         "VP": 3
                     },
                     {
-                        "Description": "Players gain 2 VPs for every Enemy Character Stand that has been destroyed during the Round.",
+                        "Description": "Players gain 2 VPs for every Enemy Regiment that has been destroyed during the Round.",
                         "VP": 2
                     }
                 ]
